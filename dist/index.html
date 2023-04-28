@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <h1>Hello Electron!!</h1>
+  <form id="encodeForm">
+      <label for="inputFile">Input File:</label>
+      <input type="file" id="inputFile" required />
+      <br />
+      <label for="outputFile">Output File:</label>
+      <input type="text" id="outputFile" required />
+      <br />
+      <label for="codec">Codec:</label>
+      <select id="codec" required>
+          <option value="libx264">H.264</option>
+          <option value="libx265">H.265</option>
+          <option value="vp9">VP9</option>
+      </select>
+      <br />
+      <button type="submit">Encode</button>
+  </form>
+  <progress id="progressBar" value="0" max="100"></progress>
+
+  <script src="../src/renderer/index.js"></script>
+</body>
+</html>
