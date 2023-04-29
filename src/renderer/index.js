@@ -1,3 +1,4 @@
+/*
 const ffmpeg = require('fluent-ffmpeg');
 
 function encodeVideo(inputFile, outputFile, codec, progressCallback) {
@@ -36,3 +37,4 @@ encodeForm.addEventListener('submit', async event => {
         alert(`An error occurred during encoding: ${error.message}`);
     }
 });
+*/

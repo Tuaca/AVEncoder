@@ -2,28 +2,124 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>AVEncoder</title>
+    <link rel="stylesheet" href="../src/reset5.css">
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
-  <h1>Hello Electron!!</h1>
-  <form id="encodeForm">
-      <label for="inputFile">Input File:</label>
-      <input type="file" id="inputFile" required />
-      <br />
-      <label for="outputFile">Output File:</label>
-      <input type="text" id="outputFile" required />
-      <br />
-      <label for="codec">Codec:</label>
-      <select id="codec" required>
-          <option value="libx264">H.264</option>
-          <option value="libx265">H.265</option>
-          <option value="vp9">VP9</option>
-      </select>
-      <br />
-      <button type="submit">Encode</button>
-  </form>
-  <progress id="progressBar" value="0" max="100"></progress>
-
+  <div id="wrapper">
+      <div id="header">
+          <div id="encoder_tab" class="header_tab on" onclick="switch_window(this)">Encoder</div>
+          <div id="editor_tab" class="header_tab" onclick="switch_window(this)">Editor</div>
+      </div>
+      <div id="container">
+          <div id="encoder">
+              <div id="encoder-wrapper">
+                  <!-- 인풋 테이블 -->
+                  <div class="grid-item">
+                      <div id="table_btn">
+                          <button>+</button>
+                          <button>-</button>
+                      </div>
+                      <div id="table">
+                          <div class="table_index row">
+                              <div class="table_column">no</div>
+                              <div class="table_column">title</div>
+                              <div class="table_column">format</div>
+                              <div class="table_column">codec</div>
+                              <div class="table_column">resolution</div>
+                              <div class="table_column">length</div>
+                              <div class="table_column">size</div>
+                          </div>
+                          <div class="table_rows">
+                              <div class="table_row row">
+                                  <div class="table_column">1</div>
+                                  <div class="table_column">MXGS-123</div>
+                                  <div class="table_column">mp4</div>
+                                  <div class="table_column">h.264</div>
+                                  <div class="table_column">1920x1080</div>
+                                  <div class="table_column">02:32:11</div>
+                                  <div class="table_column">5.64GB</div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <!-- 미디어 메타데이터 -->
+                  <div class="grid-item">
+                      <table id="meta_table">
+                          <tr>
+                              <td width="100px">filename</td>
+                              <td width="20px">:</td>
+                              <td width="180px" meta="filename">MXGS-123.mp4</td>
+                              <td width="100px">V codec</td>
+                              <td width="20px">:</td>
+                              <td width="90px" meta="v_codec">H.264/AVC</td>
+                          </tr>
+                          <tr>
+                              <td>duration</td>
+                              <td>:</td>
+                              <td meta="duration">02:12:43</td>
+                              <td>V bitrate</td>
+                              <td>:</td>
+                              <td meta="v_bitrate">6226 kbps</td>
+                          </tr>
+                          <tr>
+                              <td>resolution</td>
+                              <td>:</td>
+                              <td meta="resolution">1920 x 1080</td>
+                              <td>A codec</td>
+                              <td>:</td>
+                              <td meta="a_codec">AAC Audio</td>
+                          </tr>
+                          <tr>
+                              <td>ratio</td>
+                              <td>:</td>
+                              <td meta="ratio">16 : 9</td>
+                              <td>A bitrate</td>
+                              <td>:</td>
+                              <td meta="a_bitrate">192 kbps</td>
+                          </tr>
+                          <tr>
+                              <td>framerate</td>
+                              <td>:</td>
+                              <td meta="framerate">29.7 fps</td>
+                              <td>sample rate</td>
+                              <td>:</td>
+                              <td meta="sample_rate">480000 Hz</td>
+                          </tr>
+                          <tr>
+                              <td>bitrate</td>
+                              <td>:</td>
+                              <td meta="bitrate">8670 kbps</td>
+                              <td>size</td>
+                              <td>:</td>
+                              <td meta="size">5.46 GB</td>
+                          </tr>
+                          <tr>
+                              <td>path</td>
+                              <td>:</td>
+                              <td colspan="4" meta="path">/user/tuaca/documents/myvideo/asdfawqe/asdwe1233/asdf123/we23412</td>
+                          </tr>
+                      </table>
+                  </div>
+                  <!-- 인코딩 옵션 -->
+                  <div class="grid-item">encoding options</div>
+                  <!-- 프로그레스 바 -->
+                  <div class="grid-item">
+                      <progress value="23" max="100"></progress>
+                      <progress value="73" max="100"></progress>
+                  </div>
+                  <!-- 버튼 -->
+                  <div class="grid-item">
+                      <button>Confirm</button>
+                      <button>Reset</button>
+                  </div>
+              </div>
+          </div>
+          <div id="editor" class="hidden">editor!</div>
+      </div>
+  </div>
+  <script src="index.js"></script>
   <script src="../src/renderer/index.js"></script>
 </body>
 </html>

@@ -1,0 +1,162 @@
+.hidden{display: none;}
+body{
+    font-family: "Consolas", "Menlo", monospace;
+    font-size:16px;
+    color: #bbb;
+    background-color: #181818;
+}
+#wrapper{
+    display:flex;
+    flex-direction: column;
+    width:800px;
+    height:600px;
+
+    /*border: 1px solid red;
+    box-sizing: border-box;
+    border-collapse: collapse;*/
+}
+#header{
+    display:flex;
+    flex-direction: row;
+    height: 50px;
+    width: 100%;
+    /*border:1px solid blue;
+    box-sizing: border-box;
+    border-collapse: collapse;*/
+}
+.header_tab{
+    width:200px;
+    height: 100%;
+    text-align: center;
+    line-height: 50px;
+    font-size: 1.2em;
+
+    /*border:1px solid green;
+    box-sizing: border-box;
+    border-collapse: collapse;*/
+}
+.on{
+    border-radius: 15px 15px 0 0;
+    background-color: #262626;
+}
+#container{
+    background-color: #262626;
+    width: 800px;
+    height: 550px;
+    /*border:1px solid yellow;
+    box-sizing: border-box;*/
+}
+#encoder{width:800px; height: 550px;}
+#encoder-wrapper{
+    width: 800px;
+    height: 550px;
+    display:grid;
+    grid-template-columns: 530px 270px;
+    grid-template-rows: 330px 160px 60px;
+}
+#encoder .grid-item{
+    border:1px solid #323232;
+    border-bottom-color:#181818;
+    border-right-color:#181818;
+    box-sizing: border-box;
+}
+
+/*테이블 영역*/
+#encoder .grid-item:nth-child(1){
+    width: 530px;
+    height: 330px;
+    grid-column: 1/2; grid-row: 1/2;
+    display:grid;
+    grid-template-columns: 50px 480px;
+    grid-template-rows: 1fr;
+}
+/*테이블*/
+#table::-webkit-scrollbar{background-color: #181818; height: 10px;}
+#table::-webkit-scrollbar-thumb{background-color: #323232; border-radius: 10px; border: 2px solid #181818; box-sizing: border-box;}
+#table::-webkit-scrollbar-thumb:hover{background-color: #666;}
+#table{
+    width: 480px; height: 330px;
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+    overflow-y: hidden;
+    font-size: 0.8em;
+    text-align: center;
+}
+.row{display: flex; flex-direction: row;}
+.table_index{height: 40px; line-height: 40px;}
+.table_index .table_column {border-left: 1px solid #323232; border-right: 1px solid #181818; box-sizing: border-box;}
+.table_rows{
+    width: 650px;
+    height: 330px;
+    display: flex;
+    flex-direction: column;
+    background-color: #181818;
+}
+.table_row{height: 30px; line-height: 30px;}
+.table_column:nth-child(1){width:30px;}
+.table_column:nth-child(2){width:160px;}
+.table_column:nth-child(3){width:80px;}
+.table_column:nth-child(4){width:80px;}
+.table_column:nth-child(5){width:120px;}
+.table_column:nth-child(6){width:100px;}
+.table_column:nth-child(7){width:80px;}
+.table_column{flex-shrink: 0;}
+
+#table_btn button {
+    width: 50px;
+    height: 50px;
+    background-color: #262626;
+    border: 1px solid #323232;
+    border-right-color: #181818;
+    border-bottom-color: #181818;
+    box-sizing: border-box;
+    color: white;
+    font-size: 1.6em;
+}
+#table_btn button:active {
+    border: 1px solid #181818;
+    border-right-color: #323232;
+    border-bottom-color: #323232;
+}
+
+
+/*메타데이터 영역*/
+#encoder .grid-item:nth-child(2){
+    width: 530px; height: 160px;
+    padding:10px;
+    font-size: 0.8em;
+    line-height: 1.6em;
+    grid-column: 1/2; grid-row: 2/3;
+}
+#meta_table{width: 510px; height:140px; table-layout: fixed;}
+#meta_table tr td{overflow: hidden; white-space: nowrap; text-overflow : ellipsis;}
+
+/*인코딩 옵션 영역*/
+#encoder .grid-item:nth-child(3){
+    grid-column: 2/3; grid-row: 1/3;
+    display:flex;
+    flex-direction: column;
+}
+/*진행상황 영역*/
+#encoder .grid-item:nth-child(4){
+    grid-column: 1/2; grid-row: 3/4;
+    padding-left: 10px;;
+}
+progress{width: 80%; height: 10px; appearance: none;}
+progress::-webkit-progress-bar{
+    background-color: #181818;
+    border-radius: 5px;
+}
+progress::-webkit-progress-value{
+    background-color: #aaa;
+    border-radius: 5px;
+}
+
+/*버튼 영역*/
+#encoder .grid-item:nth-child(5){
+    grid-column: 2/3; grid-row: 3/4;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
