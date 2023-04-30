@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>AVEncoder</title>
-    <link rel="stylesheet" href="../src/reset5.css">
+    <link rel="stylesheet" href="../reset5.css">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
@@ -34,7 +34,34 @@
                           <div class="table_rows">
                               <div class="table_row row">
                                   <div class="table_column">1</div>
-                                  <div class="table_column">MXGS-123</div>
+                                  <div class="table_column">MY_VIDEO</div>
+                                  <div class="table_column">mp4</div>
+                                  <div class="table_column">h.264</div>
+                                  <div class="table_column">1920x1080</div>
+                                  <div class="table_column">02:32:11</div>
+                                  <div class="table_column">5.64GB</div>
+                              </div>
+                              <div class="table_row row">
+                                  <div class="table_column">2</div>
+                                  <div class="table_column">MY_VIDEO</div>
+                                  <div class="table_column">mp4</div>
+                                  <div class="table_column">h.264</div>
+                                  <div class="table_column">1920x1080</div>
+                                  <div class="table_column">02:32:11</div>
+                                  <div class="table_column">5.64GB</div>
+                              </div>
+                              <div class="table_row row">
+                                  <div class="table_column">3</div>
+                                  <div class="table_column">MY_VIDEO</div>
+                                  <div class="table_column">mp4</div>
+                                  <div class="table_column">h.264</div>
+                                  <div class="table_column">1920x1080</div>
+                                  <div class="table_column">02:32:11</div>
+                                  <div class="table_column">5.64GB</div>
+                              </div>
+                              <div class="table_row row">
+                                  <div class="table_column">4</div>
+                                  <div class="table_column">MY_VIDEO</div>
                                   <div class="table_column">mp4</div>
                                   <div class="table_column">h.264</div>
                                   <div class="table_column">1920x1080</div>
@@ -50,7 +77,7 @@
                           <tr>
                               <td width="100px">filename</td>
                               <td width="20px">:</td>
-                              <td width="180px" meta="filename">MXGS-123.mp4</td>
+                              <td width="180px" meta="filename">MY_VIDEO.mp4</td>
                               <td width="100px">V codec</td>
                               <td width="20px">:</td>
                               <td width="90px" meta="v_codec">H.264/AVC</td>
@@ -103,7 +130,88 @@
                       </table>
                   </div>
                   <!-- 인코딩 옵션 -->
-                  <div class="grid-item">encoding options</div>
+                  <div class="grid-item">
+                      <p style="margin-bottom: 10px;">Encoding Options</p>
+                      <hr/>
+                      <div class="encoding_item">
+                          <label for="output_path">Output Path</label>
+                          <input id="output_path" name="output_path" type="text"/>
+                          <button onclick="openDirectory()">/</button>
+                      </div>
+                      <div class="encoding_item">
+                          <label for="presets">Presets</label>
+                          <select id="presets" name="presets">
+                              <option value="custom">custom</option>
+                              <option value="fast">fast</option>
+                              <option value="slow">slow</option>
+                          </select>
+                      </div>
+                      <hr/>
+                      <div class="encoding_item">
+                          <label for="v_codec">Video Codec</label>
+                          <select id="v_codec" name="v_codec">
+                              <option value="h.264">H.264/AVC</option>
+                              <option value="h.265">H.265/HEVC</option>
+                              <option value="vp9">VP9</option>
+                              <option value="av1">AV1</option>
+                              <option value="av1">Theora</option>
+                              <option value="av1">Vorbis</option>
+                          </select>
+                      </div>
+                      <hr/>
+                      <div class="encoding_item">
+                          <label for="crf">Quality : <span>30</span></label>
+                          <input id="crf" type="range" name="crf" min="-1" max="63" step="1" value="30" oninput="update_range_value(this)"/>
+                      </div>
+                      <hr/>
+                      <div class="encoding_item">
+                          <label for="bitrate">Bitrate</label>
+                          <input id="bitrate" name="bitrate" type="text"/>
+                      </div>
+                      <hr/>
+                      <div class="encoding_item">
+                          <label for="framerate">Framerate</label>
+                          <input id="framerate" name="framerate" type="text"/>
+                      </div>
+                      <hr/>
+                      <div class="encoding_item">
+                          <label for="resolution">Resolution</label>
+                          <select id="resolution" name="resolution">
+                              <option value="default">default</option>
+                              <option value="720x480">720 x 480</option>
+                              <option value="1280x720">1280 x 720</option>
+                              <option value="1920x1080">1920 x 1080</option>
+                          </select>
+                      </div>
+                      <hr/>
+                      <div class="encoding_item">
+                          <label for="a_codec">Audio Codec</label>
+                          <select id="a_codec" name="a_codec">
+                              <option value="mp3">MP3</option>
+                              <option value="aac">AAC</option>
+                              <option value="ac-3">AC-3</option>
+                              <option value="opus">Opus</option>
+                              <option value="vorbis">Vorbis</option>
+                          </select>
+                      </div>
+                      <hr/>
+                      <div class="encoding_item">
+                          <label for="a_bitrate">Audio Bitrate</label>
+                          <select id="a_bitrate" name="a_bitrate">
+                              <option value="128">128 kbps</option>
+                              <option value="192">192 kbps</option>
+                              <option value="320">320 kbps</option>
+                          </select>
+                      </div>
+                      <hr/>
+                      <div class="encoding_item">
+                          <label for="sample_rate">Sample Rate</label>
+                          <select id="sample_rate" name="sample_rate">
+                              <option value="44100">44.1 kHz</option>
+                              <option value="48000">48 kHz</option>
+                          </select>
+                      </div>
+                  </div>
                   <!-- 프로그레스 바 -->
                   <div class="grid-item">
                       <progress value="23" max="100"></progress>
@@ -120,6 +228,5 @@
       </div>
   </div>
   <script src="index.js"></script>
-  <script src="../src/renderer/index.js"></script>
 </body>
 </html>

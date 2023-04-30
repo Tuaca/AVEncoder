@@ -5,6 +5,27 @@ body{
     color: #bbb;
     background-color: #181818;
 }
+input{
+    border: 1px solid #181818;
+    border-right-color: #323232;
+    border-bottom-color: #323232;
+    border-radius: 10px;
+    background-color: #181818;
+    margin:0; padding:0;
+    color:#bbbbbb;;
+}
+select{
+    color: #bbb;
+    border: 1px solid #181818;
+    border-right-color: #323232;
+    border-bottom-color: #323232;
+    border-radius: 10px;
+    background-color: #181818;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+hr{margin: 0 0 5px; width:200px; border-top:1px solid #181818; border-bottom: 1px solid #323232;}
 #wrapper{
     display:flex;
     flex-direction: column;
@@ -137,7 +158,25 @@ body{
     grid-column: 2/3; grid-row: 1/3;
     display:flex;
     flex-direction: column;
+    align-items: center;
+    padding:10px;
+    overflow: auto;
 }
+#encoder .grid-item:nth-child(3)::-webkit-scrollbar{width:20px; -webkit-appearance: none;}
+#encoder .grid-item:nth-child(3)::-webkit-scrollbar-thumb{background-color: #464646; border: 7px solid #262626; border-radius: 10px; box-sizing: border-box; -webkit-appearance: none;}
+#encoder .grid-item:nth-child(3)::-webkit-scrollbar-thumb:hover{background-color: #666;}
+.encoding_item{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.8em;
+    margin-bottom: 10px;
+}
+.encoding_item label, input, select{margin-top:5px; margin-bottom:5px;}
+.encoding_item select {width:200px; height: 20px; padding-left:10px;}
+.encoding_item input {width:188px; height: 18px; line-height: 18px; padding-left: 10px;}
+.encoding_item input[type="range"] {padding:0;}
+
 /*진행상황 영역*/
 #encoder .grid-item:nth-child(4){
     grid-column: 1/2; grid-row: 3/4;
@@ -147,10 +186,14 @@ progress{width: 80%; height: 10px; appearance: none;}
 progress::-webkit-progress-bar{
     background-color: #181818;
     border-radius: 5px;
+    border:1px solid #181818;
+    border-right-color: #323232;
+    border-bottom-color: #323232;
 }
 progress::-webkit-progress-value{
     background-color: #aaa;
     border-radius: 5px;
+    border:1px solid #181818;
 }
 
 /*버튼 영역*/
