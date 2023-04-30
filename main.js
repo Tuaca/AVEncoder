@@ -1,12 +1,11 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+
 const path = require('path');
 
 async function createWindow() {
     const mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        maxWidth: 850,
-        maxHeight: 650,
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
@@ -18,12 +17,37 @@ async function createWindow() {
     await mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
 }
 
-console.log('it\'s main.js');
-
 app.whenReady().then(() => {
     createWindow();
     ipcMain.handle('dialog',(event,method,params) => {
         return dialog[method](params);
+    });
+    ipcMain.handle('execute-ffmpeg', async (event, args) => {
+        const ffmpeg = require('fluent-ffmpeg');
+        const ffmpegPath = require('ffmpeg-static');
+
+        ffmpeg.setFfmpegPath(ffmpegPath);
+
+        // Implement your ffmpeg functions here, using args as needed
+        // e.g., convert video, extract frames, etc.
+        const getMetadata = (inputFile) => {
+            return new Promise((resolve, reject) => {
+                ffmpeg(inputFile).ffprobe((err,metadata) => {
+                    if(err) {
+                        reject(err);
+                    } else {
+                        resolve(metadata);
+                    }
+                });
+            });
+        };
+        try{
+            if(args.operation === 'getMetadata') {
+                return await getMetadata(args.inputFile);
+            }
+        } catch (err) {
+            throw err;
+        }
     });
 });
 

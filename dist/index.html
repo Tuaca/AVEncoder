@@ -34,12 +34,12 @@
                           <div class="table_rows">
                               <div class="table_row row">
                                   <div class="table_column">1</div>
-                                  <div class="table_column">MY_VIDEO</div>
+                                  <div class="table_column">MY_VIDEO test length test this is real situation</div>
                                   <div class="table_column">mp4</div>
-                                  <div class="table_column">h.264</div>
+                                  <div class="table_column">h.264/avi</div>
                                   <div class="table_column">1920x1080</div>
-                                  <div class="table_column">02:32:11</div>
-                                  <div class="table_column">5.64GB</div>
+                                  <div class="table_column">12:32:11</div>
+                                  <div class="table_column">125.64GB</div>
                               </div>
                               <div class="table_row row">
                                   <div class="table_column">2</div>
@@ -135,8 +135,10 @@
                       <hr/>
                       <div class="encoding_item">
                           <label for="output_path">Output Path</label>
-                          <input id="output_path" name="output_path" type="text"/>
-                          <button onclick="openDirectory()">/</button>
+                          <div>
+                              <input id="output_path" name="output_path" type="text"/>
+                              <button onclick="setOutputDirectory()">/</button>
+                          </div>
                       </div>
                       <div class="encoding_item">
                           <label for="presets">Presets</label>
@@ -150,27 +152,59 @@
                       <div class="encoding_item">
                           <label for="v_codec">Video Codec</label>
                           <select id="v_codec" name="v_codec">
-                              <option value="h.264">H.264/AVC</option>
-                              <option value="h.265">H.265/HEVC</option>
+                              <option value="h264">H.264/AVC</option>
+                              <option value="h265">H.265/HEVC</option>
                               <option value="vp9">VP9</option>
                               <option value="av1">AV1</option>
-                              <option value="av1">Theora</option>
-                              <option value="av1">Vorbis</option>
+                              <option value="theora">Theora</option>
+                              <option value="vorbis">Vorbis</option>
+                          </select>
+                      </div>
+                      <hr/>
+                      <div class="encoding_item">
+                          <label for="format">Container</label>
+                          <select id="format" name="container">
+                              <optgroup label="h264">
+                                  <option value="avi">AVI</option>
+                                  <option value="mp4">MP4</option>
+                                  <option value="mkv">MKV</option>
+                              </optgroup>
+                              <optgroup label="h265">
+                                  <option value="mp4">MP4</option>
+                                  <option value="mkv">MKV</option>
+                              </optgroup>
+                              <optgroup label="vp9">
+                                  <option value="webm">WebM</option>
+                                  <option value="mp4">MP4</option>
+                                  <option value="mkv">MKV</option>
+                              </optgroup>
+                              <optgroup label="av1">
+                                  <option value="webm">WebM</option>
+                                  <option value="mp4">MP4</option>
+                                  <option value="mkv">MKV</option>
+                              </optgroup>
+                              <optgroup label="theora">
+                                  <option value="mkv">MKV</option>
+                                  <option value="ogg">Ogg</option>
+                              </optgroup>
+                              <optgroup label="vorbis">
+                                  <option value="ogg">Ogg</option>
+                              </optgroup>
                           </select>
                       </div>
                       <hr/>
                       <div class="encoding_item">
                           <label for="crf">Quality : <span>30</span></label>
-                          <input id="crf" type="range" name="crf" min="-1" max="63" step="1" value="30" oninput="update_range_value(this)"/>
+                          <input id="crf" type="range" name="crf" min="-1" max="63" step="1" value="30"/>
                       </div>
                       <hr/>
                       <div class="encoding_item">
-                          <label for="bitrate">Bitrate</label>
-                          <input id="bitrate" name="bitrate" type="text"/>
+                          <label for="bitrate">Bitrate (kbps)</label>
+                          <input id="bitrate" name="bitrate" type="text" disabled/>
                       </div>
                       <hr/>
                       <div class="encoding_item">
-                          <label for="framerate">Framerate</label>
+                          <label for="framerate">Framerate (fps)</label>
                           <input id="framerate" name="framerate" type="text"/>
                       </div>
                       <hr/>

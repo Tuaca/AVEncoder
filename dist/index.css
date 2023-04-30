@@ -12,10 +12,16 @@ input{
     border-radius: 10px;
     background-color: #181818;
     margin:0; padding:0;
-    color:#bbbbbb;;
+    color:#bbbbbb;
+    font-family: inherit;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
+::-webkit-slider-thumb{-webkit-appearance: none; appearance: none;}
 select{
     color: #bbb;
+    font-family: inherit;
     border: 1px solid #181818;
     border-right-color: #323232;
     border-bottom-color: #323232;
@@ -108,7 +114,7 @@ hr{margin: 0 0 5px; width:200px; border-top:1px solid #181818; border-bottom: 1p
 .table_index{height: 40px; line-height: 40px;}
 .table_index .table_column {border-left: 1px solid #323232; border-right: 1px solid #181818; box-sizing: border-box;}
 .table_rows{
-    width: 650px;
+    width: 590px;
     height: 330px;
     display: flex;
     flex-direction: column;
@@ -117,12 +123,12 @@ hr{margin: 0 0 5px; width:200px; border-top:1px solid #181818; border-bottom: 1p
 .table_row{height: 30px; line-height: 30px;}
 .table_column:nth-child(1){width:30px;}
 .table_column:nth-child(2){width:160px;}
-.table_column:nth-child(3){width:80px;}
+.table_column:nth-child(3){width:60px;}
 .table_column:nth-child(4){width:80px;}
-.table_column:nth-child(5){width:120px;}
-.table_column:nth-child(6){width:100px;}
+.table_column:nth-child(5){width:100px;}
+.table_column:nth-child(6){width:80px;}
 .table_column:nth-child(7){width:80px;}
-.table_column{flex-shrink: 0;}
+.table_column{flex-shrink: 0; overflow: hidden; white-space: nowrap; text-overflow : ellipsis;}
 
 #table_btn button {
     width: 50px;
@@ -175,7 +181,12 @@ hr{margin: 0 0 5px; width:200px; border-top:1px solid #181818; border-bottom: 1p
 .encoding_item label, input, select{margin-top:5px; margin-bottom:5px;}
 .encoding_item select {width:200px; height: 20px; padding-left:10px;}
 .encoding_item input {width:188px; height: 18px; line-height: 18px; padding-left: 10px;}
-.encoding_item input[type="range"] {padding:0;}
+.encoding_item input[name="output_path"] {width: 160px;}
+.encoding_item input[type="range"] {height: 6px; padding:0;}
+.encoding_item input[type="range"]::-webkit-slider-thumb {width:5px; height:15px; border-radius: 3px; background-color:#999;}
+button[onclick="setOutputDirectory()"] {width:18px; height: 18px; background-color: #666; border-radius: 20px; box-sizing: border-box;}
+input[name="bitrate"]:disabled{background-color:#242424; color:#666;}
+
 
 /*진행상황 영역*/
 #encoder .grid-item:nth-child(4){
