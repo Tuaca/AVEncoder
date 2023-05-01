@@ -25,7 +25,6 @@ app.whenReady().then(() => {
     ipcMain.handle('execute-ffmpeg', async (event, args) => {
         const ffmpeg = require('fluent-ffmpeg');
         const ffmpegPath = require('ffmpeg-static');
-
         ffmpeg.setFfmpegPath(ffmpegPath);
 
         // Implement your ffmpeg functions here, using args as needed

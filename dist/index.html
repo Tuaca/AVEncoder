@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title>AVEncoder</title>
     <link rel="stylesheet" href="../reset5.css">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-  <div id="wrapper">
+    <div id="template" class="hidden">
+        <div class="table_row row"><div class="table_column"></div><div class="table_column"></div><div class="table_column"></div><div class="table_column"></div><div class="table_column"></div><div class="table_column"></div><div class="table_column"></div></div>
+    </div>
+   <div id="wrapper">
       <div id="header">
-          <div id="encoder_tab" class="header_tab on" onclick="switch_window(this)">Encoder</div>
-          <div id="editor_tab" class="header_tab" onclick="switch_window(this)">Editor</div>
+          <div id="encoder_tab" class="header_tab on">Encoder</div>
+          <div id="editor_tab" class="header_tab">Editor</div>
       </div>
       <div id="container">
           <div id="encoder">
@@ -18,8 +21,8 @@
                   <!-- 인풋 테이블 -->
                   <div class="grid-item">
                       <div id="table_btn">
-                          <button>+</button>
-                          <button>-</button>
+                          <button id="add">+</button>
+                          <button id="remove">-</button>
                       </div>
                       <div id="table">
                           <div class="table_index row">
@@ -31,113 +34,76 @@
                               <div class="table_column">length</div>
                               <div class="table_column">size</div>
                           </div>
-                          <div class="table_rows">
-                              <div class="table_row row">
-                                  <div class="table_column">1</div>
-                                  <div class="table_column">MY_VIDEO test length test this is real situation</div>
-                                  <div class="table_column">mp4</div>
-                                  <div class="table_column">h.264/avi</div>
-                                  <div class="table_column">1920x1080</div>
-                                  <div class="table_column">12:32:11</div>
-                                  <div class="table_column">125.64GB</div>
-                              </div>
-                              <div class="table_row row">
-                                  <div class="table_column">2</div>
-                                  <div class="table_column">MY_VIDEO</div>
-                                  <div class="table_column">mp4</div>
-                                  <div class="table_column">h.264</div>
-                                  <div class="table_column">1920x1080</div>
-                                  <div class="table_column">02:32:11</div>
-                                  <div class="table_column">5.64GB</div>
-                              </div>
-                              <div class="table_row row">
-                                  <div class="table_column">3</div>
-                                  <div class="table_column">MY_VIDEO</div>
-                                  <div class="table_column">mp4</div>
-                                  <div class="table_column">h.264</div>
-                                  <div class="table_column">1920x1080</div>
-                                  <div class="table_column">02:32:11</div>
-                                  <div class="table_column">5.64GB</div>
-                              </div>
-                              <div class="table_row row">
-                                  <div class="table_column">4</div>
-                                  <div class="table_column">MY_VIDEO</div>
-                                  <div class="table_column">mp4</div>
-                                  <div class="table_column">h.264</div>
-                                  <div class="table_column">1920x1080</div>
-                                  <div class="table_column">02:32:11</div>
-                                  <div class="table_column">5.64GB</div>
-                              </div>
-                          </div>
+                          <div class="table_rows"></div>
                       </div>
                   </div>
                   <!-- 미디어 메타데이터 -->
                   <div class="grid-item">
                       <table id="meta_table">
                           <tr>
-                              <td width="100px">filename</td>
-                              <td width="20px">:</td>
-                              <td width="180px" meta="filename">MY_VIDEO.mp4</td>
-                              <td width="100px">V codec</td>
-                              <td width="20px">:</td>
-                              <td width="90px" meta="v_codec">H.264/AVC</td>
+                              <td>filename</td>
+                              <td>:</td>
+                              <td meta="fileName"></td>
+                              <td>V codec</td>
+                              <td>:</td>
+                              <td meta="v_codec"></td>
                           </tr>
                           <tr>
                               <td>duration</td>
                               <td>:</td>
-                              <td meta="duration">02:12:43</td>
+                              <td meta="duration"></td>
                               <td>V bitrate</td>
                               <td>:</td>
-                              <td meta="v_bitrate">6226 kbps</td>
+                              <td meta="v_bitrate"></td>
                           </tr>
                           <tr>
                               <td>resolution</td>
                               <td>:</td>
-                              <td meta="resolution">1920 x 1080</td>
+                              <td meta="resolution"></td>
                               <td>A codec</td>
                               <td>:</td>
-                              <td meta="a_codec">AAC Audio</td>
+                              <td meta="a_codec"></td>
                           </tr>
                           <tr>
                               <td>ratio</td>
                               <td>:</td>
-                              <td meta="ratio">16 : 9</td>
+                              <td meta="aspect_ratio"></td>
                               <td>A bitrate</td>
                               <td>:</td>
-                              <td meta="a_bitrate">192 kbps</td>
+                              <td meta="a_bitrate"></td>
                           </tr>
                           <tr>
                               <td>framerate</td>
                               <td>:</td>
-                              <td meta="framerate">29.7 fps</td>
+                              <td meta="framerate"></td>
                               <td>sample rate</td>
                               <td>:</td>
-                              <td meta="sample_rate">480000 Hz</td>
+                              <td meta="sample_rate"></td>
                           </tr>
                           <tr>
                               <td>bitrate</td>
                               <td>:</td>
-                              <td meta="bitrate">8670 kbps</td>
+                              <td meta="bitrate"></td>
                               <td>size</td>
                               <td>:</td>
-                              <td meta="size">5.46 GB</td>
+                              <td meta="size"></td>
                           </tr>
                           <tr>
                               <td>path</td>
                               <td>:</td>
-                              <td colspan="4" meta="path">/user/tuaca/documents/myvideo/asdfawqe/asdwe1233/asdf123/we23412</td>
+                              <td colspan="4" meta="filePath"></td>
                           </tr>
                       </table>
                   </div>
                   <!-- 인코딩 옵션 -->
                   <div class="grid-item">
-                      <p style="margin-bottom: 10px;">Encoding Options</p>
+                      <p>Encoding Options</p>
                       <hr/>
                       <div class="encoding_item">
                           <label for="output_path">Output Path</label>
                           <div>
                               <input id="output_path" name="output_path" type="text"/>
-                              <button onclick="setOutputDirectory()">/</button>
+                              <button id="output_btn">/</button>
                           </div>
                       </div>
                       <div class="encoding_item">
@@ -248,13 +214,13 @@
                   </div>
                   <!-- 프로그레스 바 -->
                   <div class="grid-item">
-                      <progress value="23" max="100"></progress>
-                      <progress value="73" max="100"></progress>
+                      <progress id="current_progress" value="0" max="100"></progress>
+                      <progress id="total_progress" value="0" max="100"></progress>
                   </div>
                   <!-- 버튼 -->
                   <div class="grid-item">
-                      <button>Confirm</button>
-                      <button>Reset</button>
+                      <button id="confirm">Confirm</button>
+                      <button id="reset">Reset</button>
                   </div>
               </div>
           </div>
