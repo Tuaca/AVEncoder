@@ -271,7 +271,7 @@ progress::-webkit-progress-value{
     justify-content: center;
     align-items: center;
 }
-#confirm, #reset {
+#start, #stop {
     color:inherit;
     font-family: inherit;
     width:135px;
@@ -280,10 +280,10 @@ progress::-webkit-progress-value{
     border-bottom-color: #181818;
     border-right-color: #181818;
 }
-#confirm:active, #reset:active {
+#start:active, #stop:active {
     border:2px solid #181818;
     border-bottom-color: #323232;
     border-right-color: #323232;
 }
-#confirm{background-color: #202020;}
-#reset{background-color: #282828;}
+#start{background-color: #202020;}
+#stop{background-color: #282828;}

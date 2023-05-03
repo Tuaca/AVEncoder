@@ -8,6 +8,7 @@ const current_progress = document.querySelector('#current_progress');
 const progress_toString = document.querySelector('#progress_toString');
 let input_videos = [];
 let completedVideos = 0;
+let isEncoding = false;
 
 class Video {
     constructor(video) {
@@ -76,16 +77,20 @@ function formatBytes(bytes) {
 
 // 상단 탭을 누르면 해당 윈도우로 스위치한다.
 function switch_window(target) {
-    if(!target.classList.contains('on')){
-        header.querySelector('.on').classList.remove('on');
-        target.classList.add('on');
-        if(target.textContent === 'Encoder'){
-            document.querySelector('#encoder').classList.remove('hidden');
-            document.querySelector('#editor').classList.add('hidden');
-        } else {
-            document.querySelector('#encoder').classList.add('hidden');
-            document.querySelector('#editor').classList.remove('hidden');
+    if(!isEncoding){
+        if(!target.classList.contains('on')){
+            header.querySelector('.on').classList.remove('on');
+            target.classList.add('on');
+            if(target.textContent === 'Encoder'){
+                document.querySelector('#encoder').classList.remove('hidden');
+                document.querySelector('#editor').classList.add('hidden');
+            } else {
+                document.querySelector('#encoder').classList.add('hidden');
+                document.querySelector('#editor').classList.remove('hidden');
+            }
         }
+    } else {
+        alert('You can\'t switch tabs while video is encoding');
     }
 }
 document.querySelector('#encoder_tab').addEventListener('click', (e)=>{switch_window(e.currentTarget);});
@@ -211,74 +216,158 @@ async function executeFfmpeg(args){
     }
 }
 
-// confirm 버튼을 누르면 인코딩 옵션을 확인하고 인코딩을 시작합니다.
-document.querySelector('#confirm').addEventListener('click',() => {
+// 옵션정보를 요약합니다.
+function getSummaryText(options) {
+    let summaryText = 'Encoding options summary:\n\n';
+
+    if (options.hasOwnProperty('outputPath')) {
+        summaryText += `Output Path: ${options.outputPath}\n`;
+    }
+
+    if (options.hasOwnProperty('container')) {
+        summaryText += `Container: ${options.container}\n`;
+    }
+
+    summaryText += 'Output Options:\n';
+
+    options.outputOptions.forEach(option => {
+        summaryText += `${option}\n`;
+    });
+
+    return summaryText;
+}
+
+// 인코딩 옵션을 최종확인합니다..
+document.querySelector('#start').addEventListener('click', (e) => {
     const obj = {};
     const options = {};
     let outputOptions = [];
 
     document.querySelectorAll('.options').forEach((element) => {
-        if(!(element.value === '' || element.value === null)) obj[element.id] = element.value;
+        if (element.value !== '' && element.value !== null) {
+            obj[element.id] = element.value;
+        }
     });
 
-    // 아웃풋 디렉토리 세팅 여부를 확인합니다.
-    if(obj.hasOwnProperty('output_path')) options['outputPath'] = obj.output_path;
+    if (obj.hasOwnProperty('output_path')) {
+        options['outputPath'] = obj.output_path;
+    }
+    if (obj.hasOwnProperty('ss')) {
+        outputOptions.push('-ss ' + obj.ss);
+    }
+    if (obj.hasOwnProperty('to')) {
+        outputOptions.push('-to ' + obj.to);
+    }
 
-    // 타임스탬프 세팅 여부를 확인합니다.
-    if(obj.hasOwnProperty('ss')) outputOptions.push('-ss ' + obj.ss);
-    if(obj.hasOwnProperty('to')) outputOptions.push('-to ' + obj.to);
+    if (obj.presets === 'custom') {
+        const videoCodecOptions = getVideoCodecOptions(obj);
+        outputOptions.push(...videoCodecOptions);
 
-    // 인코딩 옵션을 확인하고 적절하게 세팅합니다.
-    // 프리셋 사용 여부를 확인합니다.
-    if(obj.presets === 'custom') {
-        // 비디오 코덱 설정 여부를 확인합니다.
-        if(obj.v_codec === 'copy'){
-            outputOptions.push('-c:v copy');
-        } else if(obj.v_codec === 'libx264'){ // h.264 코덱
-            // 하드웨어 가속 사용 여부를 확인합니다.
-            if(obj.h264_nvenc === 'on') outputOptions.push('-c:v h264_nvenc');
-            else outputOptions.push('-c:v libx264');
-            // h.264 코덱의 디테일 옵션 여부를 확인합니다.
-            if(obj.hasOwnProperty('preset')) outputOptions.push('-preset:v ' + obj.preset);
-            if(obj.hasOwnProperty('profile')) outputOptions.push('-profile:v ' + obj.profile);
-            if(obj.hasOwnProperty('level')) outputOptions.push('-level ' + obj.level);
-        } else if(obj.v_codec === 'libvpx-vp9') { // vp9 코덱
-            outputOptions.push('-c:v libvpx-vp9');
-            // vp9 코덱의 디테일 옵션 여부를 확인합니다.
-            if(obj.speed !== '0') outputOptions.push('-speed ' + obj.speed);
-            if(obj.tile_columns !== '0') outputOptions.push('-tile-columns ' + obj.tile_columns);
-            if(obj.lag_in_frames !== '0') outputOptions.push('-lag-in-frames ' + obj.lag_in_frames);
-            if(obj.frame_parallel === 'on') outputOptions.push('-frame-parallel 1');
-            if(obj.auto_alt_ref === 'on') outputOptions.push('-auto-alt-ref 1');
-        } else { outputOptions.push('-c:v ' + obj.v_codec); }
+        if (obj.hasOwnProperty('format')) {
+            options['container'] = obj.format;
+        }
 
-        // 컨테이너를 입력합니다.
-        if(obj.hasOwnProperty('format')) options['container'] = obj.format;
+        if (obj.crf !== '-1') {
+            outputOptions.push('-crf ' + obj.crf);
+        }
 
-        // crf 설정 여부를 확인합니다.
-        if(obj.crf !== '-1') outputOptions.push('-crf ' + obj.crf);
-
-        // 비디오 비트레이트 설정 여부를 확인합니다.
-        if(obj.hasOwnProperty('bitrate')) outputOptions.push('-b:v ' + obj.bitrate + 'k');
-        // 비디오 맥스레이트 설정 여부를 확인합니다.
-        if(obj.hasOwnProperty('maxrate')) outputOptions.push('-maxrate ' + obj.maxrate + 'k');
-        // 비디오 버프사이즈 설정 여부를 확인합니다.
-        if(obj.hasOwnProperty('bufsize')) outputOptions.push('-bufsize ' + obj.bufsize + 'k');
-
-        // 프레임레이트 설정 여부를 확인합니다.
-        if(obj.hasOwnProperty('framerate')) outputOptions.push('-r ' + obj.framerate);
-        // 해상도 설정 여부를 확인합니다.
-        if(obj.hasOwnProperty('resolution')) outputOptions.push('-s ' + obj.resolution);
-
-        // 오디오 옵션 여부를 확인합니다..
-        outputOptions.push('-c:a ' + obj.a_codec);
-        if(obj.hasOwnProperty('a_bitrate')) outputOptions.push('-b:a ' + obj.a_bitrate + 'k');
-        if(obj.hasOwnProperty('sample_rate')) outputOptions.push('-ar ' + obj.sample_rate);
+        addBitrateOptions(obj, outputOptions);
+        addVideoOptions(obj, outputOptions);
+        addAudioOptions(obj, outputOptions);
+    } else {
+        alert('현제 프리셋 기능을 지원하지 않습니다.');
+        return;
     }
 
     options['outputOptions'] = outputOptions;
-    encodeVideos(input_videos, options);
-    //console.log(options);
+
+    if (confirm(getSummaryText(options))) {
+        encodeVideos(input_videos, options);
+    }
+});
+function getVideoCodecOptions(obj) {
+    const videoCodecOptions = [];
+
+    switch (obj.v_codec) {
+        case 'copy':
+            videoCodecOptions.push('-c:v copy');
+            break;
+        case 'libx264': // h.264 코덱
+            if (obj.h264_nvenc === 'on') {
+                videoCodecOptions.push('-c:v h264_nvenc');
+            } else {
+                videoCodecOptions.push('-c:v libx264');
+            }
+            if (obj.hasOwnProperty('preset')) {
+                videoCodecOptions.push('-preset:v ' + obj.preset);
+            }
+            if (obj.hasOwnProperty('profile')) {
+                videoCodecOptions.push('-profile:v ' + obj.profile);
+            }
+            if (obj.hasOwnProperty('level')) {
+                videoCodecOptions.push('-level ' + obj.level);
+            }
+            break;
+        case 'libvpx-vp9': // vp9 코덱
+            videoCodecOptions.push('-c:v libvpx-vp9');
+            if (obj.speed !== '0') {
+                videoCodecOptions.push('-speed ' + obj.speed);
+            }
+            if (obj.tile_columns !== '0') {
+                videoCodecOptions.push('-tile-columns ' + obj.tile_columns);
+            }
+            if (obj.lag_in_frames !== '0') {
+                videoCodecOptions.push('-lag-in-frames ' + obj.lag_in_frames);
+            }
+            if (obj.frame_parallel === 'on') {
+                videoCodecOptions.push('-frame-parallel 1');
+            }
+            if (obj.auto_alt_ref === 'on') {
+                videoCodecOptions.push('-auto-alt-ref 1');
+            }
+            break;
+        default:
+            videoCodecOptions.push('-c:v ' + obj.v_codec);
+    }
+    return videoCodecOptions;
+}
+function addBitrateOptions(obj, outputOptions) {
+    if (obj.hasOwnProperty('bitrate')) {
+        outputOptions.push('-b:v ' + obj.bitrate + 'k');
+    }
+    if (obj.hasOwnProperty('maxrate')) {
+        outputOptions.push('-maxrate ' + obj.maxrate + 'k');
+    }
+    if (obj.hasOwnProperty('bufsize')) {
+        outputOptions.push('-bufsize ' + obj.bufsize + 'k');
+    }
+}
+function addVideoOptions(obj, outputOptions) {
+    if (obj.hasOwnProperty('framerate')) {
+        outputOptions.push('-r ' + obj.framerate);
+    }
+    if (obj.hasOwnProperty('resolution')) {
+        outputOptions.push('-s ' + obj.resolution);
+    }
+}
+function addAudioOptions(obj, outputOptions) {
+    outputOptions.push('-c:a ' + obj.a_codec);
+    if (obj.hasOwnProperty('a_bitrate')) {
+        outputOptions.push('-b:a ' + obj.a_bitrate + 'k');
+    }
+    if (obj.hasOwnProperty('sample_rate')) {
+        outputOptions.push('-ar ' + obj.sample_rate);
+    }
+}
+
+
+// 인코딩을 중지합니다.
+document.querySelector('#stop').addEventListener('click',()=>{
+    if(isEncoding) {
+        if(confirm('Would you really stop the current encoding?')) {
+            window.electron.send('stop');
+        }
+    }
 });
 
 // 진행상황을 표시합니다.
@@ -294,11 +383,26 @@ function updateProgressBar(percent){
     total_progress.nextSibling.textContent = ` total : ${Math.floor(t_pro)}%`
 }
 
+// 인코딩 중 사용자 인터페이스 작동을 중지합니다.
+function toggleInterface(){
+    const options = document.querySelectorAll('.options');
+    const btns = document.querySelectorAll('.btn');
+    if(isEncoding === true) {
+        options.forEach(option => {option.disabled = true;});
+        btns.forEach(button => {button.disabled = true});
+    } else {
+        options.forEach(option => {option.disabled = false;});
+        btns.forEach(button => {button.disabled = false});
+    }
+}
+
 // 인코딩을 시작합니다.
 async function encodeVideos(videos, options){
     current_progress.value = 0;
     total_progress.value = 0;
     completedVideos = 0;
+    isEncoding = true;
+    toggleInterface();
     for(const video of videos) {
         const encodingOptions = {
             inputFile : video.filePath,
@@ -307,10 +411,18 @@ async function encodeVideos(videos, options){
         };
         if(options.hasOwnProperty('outputPath')) encodingOptions['outputPath'] = options.outputPath;
         if(options.hasOwnProperty('container')) encodingOptions['container'] = options.container;
-        // console.log(encodingOptions);
-        await executeFfmpeg({operation:'encode', options: encodingOptions});
+        let isCorrupted = false;
+        await executeFfmpeg({operation:'encode', options: encodingOptions}).then(result => {
+            if(result === null) isCorrupted = true;
+        });
+        if(isCorrupted) {
+            alert('The process has stopped');
+            break;
+        }
         updateProgressBar(100);
         completedVideos++;
     }
+    isEncoding = false;
+    toggleInterface();
     alert('encoding complete!');
 }
