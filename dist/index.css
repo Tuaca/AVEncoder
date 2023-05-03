@@ -1,22 +1,32 @@
-.hidden{display: none;}
+.hidden{display: none !important;}
 body{
     font-family: "Consolas", "Menlo", monospace;
     font-size:16px;
     color: #bbb;
     background-color: #181818;
 }
-input{
+input {
     border: 1px solid #181818;
     border-right-color: #323232;
     border-bottom-color: #323232;
-    border-radius: 10px;
     background-color: #181818;
-    margin:0; padding:0;
     color:#bbbbbb;
     font-family: inherit;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+}
+input[type='text'],input[type='range']{
+    border-radius: 10px;
+    margin:0; padding:0;
+}
+input[type='checkbox']{
+    width: 15px; height: 15px;
+    text-align: center; line-height: 15px; font-weight: bold;
+    background-color: #181818;
+}
+input[type='checkbox']:checked:after{
+    content:"\2713";
 }
 ::-webkit-slider-thumb{-webkit-appearance: none; appearance: none;}
 select{
@@ -31,6 +41,19 @@ select{
     -moz-appearance: none;
     appearance: none;
 }
+input[type='time']::-webkit-calendar-picker-indicator{
+    background-color:#666;
+    border-radius: 10px;
+    width:10px; height: 10px;
+    border: 1px solid #323232;
+    border-right-color: #888;
+    border-bottom-color: #888;
+    margin-right:5px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
 hr{margin: 0 0 5px; width:200px; border-top:1px solid #181818; border-bottom: 1px solid #323232;}
 #wrapper{
     display:flex;
@@ -188,20 +211,43 @@ hr{margin: 0 0 5px; width:200px; border-top:1px solid #181818; border-bottom: 1p
 }
 .encoding_item label, input, select{margin-top:5px; margin-bottom:5px;}
 .encoding_item select {width:200px; height: 20px; padding-left:10px;}
-.encoding_item input {width:188px; height: 18px; line-height: 18px; padding-left: 10px;}
+.encoding_item input[type='text'], .encoding_item input[type='range'] {width:188px; height: 18px; line-height: 18px; padding-left: 10px;}
 .encoding_item input[name="output_path"] {width: 160px;}
 .encoding_item input[type="range"] {height: 6px; padding:0;}
 .encoding_item input[type="range"]::-webkit-slider-thumb {width:5px; height:15px; border-radius: 3px; background-color:#999;}
 #output_btn {width:18px; height: 18px; background-color: #666; border-radius: 20px; box-sizing: border-box;}
 input[name="bitrate"]:disabled{background-color:#242424; color:#666;}
-
+.dropdown{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 20px;
+    overflow: hidden;
+    transition: all 0.5s;
+}
+.dropdown .dropdown_btn{
+    margin:5px;
+}
+.dropdown input[type='number'] {width:40px; padding-left:5px;}
+.dropdown_options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#format optgroup {display:none;}
 
 /*진행상황 영역*/
 #encoder .grid-item:nth-child(4){
     width:530px; height: 60px;
     grid-column: 1/2; grid-row: 3/4;
     padding-left: 10px;;
+    display:flex;
+    flex-direction: column;
+    font-size: 0.7em;
+    overflow: hidden;
 }
+#encoder .grid-item:nth-child(4) div{margin-top:6px;}
+#encoder .grid-item:nth-child(4) > span{margin-top:6px;}
 progress{width: 80%; height: 10px; appearance: none;}
 progress::-webkit-progress-bar{
     background-color: #181818;
