@@ -102,22 +102,20 @@
                     <div class="encoding_item">
                         <label for="output_path">Output Path</label>
                         <div>
-                            <input id="output_path" class="options" name="output_path" type="text"/>
+                            <input id="output_path" class="options essential" name="output_path" type="text"/>
                             <button id="output_btn" class="btn">/</button>
                         </div>
                     </div>
                     <hr/>
                     <div class="encoding_item">
-                        <label for="ss">ss <input id="ss" class="options" name="ss" type="time" min="00:00:00" max="23:59:59" step="1"/></label>
-                        <label for="to">to <input id="to" class="options" name="to" type="time" min="00:00:00" max="23:59:59" step="1"/></label>
+                        <label for="ss">ss <input id="ss" class="options essential" name="ss" type="time" min="00:00:00" max="23:59:59" step="1"/></label>
+                        <label for="to">to <input id="to" class="options essential" name="to" type="time" min="00:00:00" max="23:59:59" step="1"/></label>
                     </div>
                     <hr/>
                     <div class="encoding_item">
                         <label for="presets">Presets</label>
-                        <select id="presets" class="options" name="presets">
+                        <select id="presets" class="options essential" name="presets">
                             <option value="custom">custom</option>
-                            <option value="fast">fast</option>
-                            <option value="slow">slow</option>
                         </select>
                     </div>
                     <hr/>
@@ -255,9 +253,9 @@
                         <select id="a_codec" class="options" name="a_codec">
                             <option value="copy">copy</option>
                             <option value="aac">AAC</option>
-                            <option value="opus">Opus</option>
+                            <option value="libopus">Opus</option>
                             <option value="mp3">MP3</option>
-                            <option value="ac-3">AC-3</option>
+                            <option value="ac3">AC-3</option>
                             <option value="vorbis">Vorbis</option>
                         </select>
                     </div>
@@ -280,6 +278,12 @@
                             <option value="48000">48 kHz</option>
                         </select>
                     </div>
+                    <hr/>
+                    <div class="encoding_item">
+                        <label for="presetName">Export User Preset</label>
+                        <input id="presetName" type="text" placeholder="user preset name"/>
+                        <button id="export_preset">export</button>
+                    </div>
                 </div>
                 <!-- 프로그레스 바 -->
                 <div class="grid-item">
@@ -298,7 +302,7 @@
                 </div>
             </div>
         </div>
-        <div id="editor" class="hidden">editor!</div>
+        <div id="editor" class="hidden">Not yet</div>
     </div>
 </div>
 <script src="index.js"></script>

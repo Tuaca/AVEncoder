@@ -52,6 +52,14 @@ class Video {
             sample_rate:this.sample_rate
         }
     }
+    getFileNameWithoutExtension(){
+        const split_location = this.fileName.lastIndexOf('.');
+        return this.fileName.substring(0, split_location);
+    }
+    getFileExtension(){
+        const split_location = this.fileName.lastIndexOf('.');
+        return this.fileName.substring(split_location + 1);
+    }
 }
 
 // duration 을 초 단위로 입력받아 00:00:00 형태의 타임스탬프로 변환하는 함수
@@ -60,6 +68,15 @@ function formatDuration(duration) {
     const minutes = Math.floor((duration - (hours * 3600)) / 60);
     const seconds = Math.floor(duration % 60);
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// 00:00:00 형태의 타임스탬프를 초로 환산합니다.
+function convertTimeToSeconds(timeString) {
+    const timeParts = timeString.split(":");
+    const hours = parseInt(timeParts[0], 10);
+    const minutes = parseInt(timeParts[1], 10);
+    const seconds = parseInt(timeParts[2], 10);
+    return hours * 3600 + minutes * 60 + seconds;
 }
 
 // Byte 값을 단위변환하는 함수
@@ -96,16 +113,29 @@ function switch_window(target) {
 document.querySelector('#encoder_tab').addEventListener('click', (e)=>{switch_window(e.currentTarget);});
 document.querySelector('#editor_tab').addEventListener('click', (e)=>{switch_window(e.currentTarget);});
 
+// 사용자 정의 프리셋을 내보냅니다.
+document.querySelector('#export_preset').addEventListener('click', () => {
+    const options = getEncodingOptions();
+    if(!confirm(getSummaryText(options))) return;
+    const presetName = document.querySelector('#presetName').value;
+    if(presetName) {
+        options['presetName'] = presetName;
+        options['outputOptions'] = options['outputOptions'].filter((value) => !value.includes('-ss') && !value.includes('-to'));
+        window.electron.send('export_preset', options);
+    } else {
+        alert('input preset name');
+    }
+});
 
 // 대기열을 초기화 후 업데이트합니다.
 function updateList(){
     table_list.innerHTML = '';
     input_videos.forEach(function (video, index){
         const new_list = list_template.cloneNode(true);
-        const split_location = video.fileName.lastIndexOf('.');
         new_list.children[0].textContent = index + 1;
-        new_list.children[1].textContent = video.fileName.substring(0, split_location);
-        new_list.children[2].textContent = video.fileName.substring(split_location + 1);
+        new_list.children[1].textContent = video.getFileNameWithoutExtension();
+        new_list.children[1].setAttribute('title', video.getFileNameWithoutExtension());
+        new_list.children[2].textContent = video.getFileExtension();
         new_list.children[3].textContent = video.v_codec;
         new_list.children[4].textContent = video.width + ' x ' + video.height;
         new_list.children[5].textContent = video.duration;
@@ -154,6 +184,21 @@ function focusItem(item){
         td.textContent = input_videos[index][td.getAttribute('meta')];
     });
 }
+
+// 사전 설정을 선택하면 커스텀 인코딩 옵션 창을 비활성화합니다.
+document.querySelector('#presets').addEventListener('change', (e)=>{
+    if(e.currentTarget.value === 'custom'){
+        document.querySelectorAll('.options').forEach(option => {
+            option.disabled = false;
+        });
+    } else {
+        document.querySelectorAll('.options').forEach(option => {
+            if(!option.classList.contains('essential')){
+                option.disabled = true;
+            }
+        });
+    }
+});
 
 // 비디오 코덱을 설정하면 해당 코덱에서 사용할 수 있는 옵션과 컨테이너를 표시합니다.
 document.querySelector('select[id="v_codec"]').addEventListener('change', (e) => {
@@ -218,34 +263,38 @@ async function executeFfmpeg(args){
 
 // 옵션정보를 요약합니다.
 function getSummaryText(options) {
-    let summaryText = 'Encoding options summary:\n\n';
+    let summaryText = 'Encoding options summary:\n';
 
-    if (options.hasOwnProperty('outputPath')) {
-        summaryText += `Output Path: ${options.outputPath}\n`;
-    }
-
-    if (options.hasOwnProperty('container')) {
-        summaryText += `Container: ${options.container}\n`;
-    }
+    if (options.hasOwnProperty('outputPath')) {summaryText += `Output Path: ${options.outputPath}\n`;}
+    if (options.hasOwnProperty('container')) {summaryText += `Container: ${options.container}\n`;}
+    if (options.hasOwnProperty('presets')) {summaryText += `Presets: ${options.presets}\n`;}
 
     summaryText += 'Output Options:\n';
 
-    options.outputOptions.forEach(option => {
-        summaryText += `${option}\n`;
-    });
+    options.outputOptions.forEach(option => {summaryText += `${option}\n`;});
 
     return summaryText;
 }
 
-// 인코딩 옵션을 최종확인합니다..
+// 인코딩을 시작합니다.
 document.querySelector('#start').addEventListener('click', (e) => {
+    if (confirm(getSummaryText(getEncodingOptions()))) {
+        encodeVideos(input_videos, getEncodingOptions());
+    }
+});
+
+// 인코딩 옵션을 반환합니다.
+function getEncodingOptions(){
     const obj = {};
     const options = {};
     let outputOptions = [];
 
     document.querySelectorAll('.options').forEach((element) => {
-        if (element.value !== '' && element.value !== null) {
+        if (element.value) {
             obj[element.id] = element.value;
+            if(element.type === 'checkbox'){
+                obj[element.id] = element.checked;
+            }
         }
     });
 
@@ -275,16 +324,12 @@ document.querySelector('#start').addEventListener('click', (e) => {
         addVideoOptions(obj, outputOptions);
         addAudioOptions(obj, outputOptions);
     } else {
-        alert('현제 프리셋 기능을 지원하지 않습니다.');
-        return;
+        options['presets'] = obj.presets;
     }
-
     options['outputOptions'] = outputOptions;
 
-    if (confirm(getSummaryText(options))) {
-        encodeVideos(input_videos, options);
-    }
-});
+    return options;
+}
 function getVideoCodecOptions(obj) {
     const videoCodecOptions = [];
 
@@ -319,10 +364,10 @@ function getVideoCodecOptions(obj) {
             if (obj.lag_in_frames !== '0') {
                 videoCodecOptions.push('-lag-in-frames ' + obj.lag_in_frames);
             }
-            if (obj.frame_parallel === 'on') {
+            if (obj.frame_parallel) {
                 videoCodecOptions.push('-frame-parallel 1');
             }
-            if (obj.auto_alt_ref === 'on') {
+            if (obj.auto_alt_ref) {
                 videoCodecOptions.push('-auto-alt-ref 1');
             }
             break;
@@ -372,13 +417,23 @@ document.querySelector('#stop').addEventListener('click',()=>{
 
 // 진행상황을 표시합니다.
 window.electron.on('progress-update', (progress) => {
-    updateProgressBar(progress.percent);
+    updateProgressBar(progress.percent, progress.currentVideo);
     progress_toString.textContent = `frame=${progress.frames} fps=${progress.currentFps} size=${progress.targetSize} time=${progress.timemark} bitrate=${progress.currentKbps}kbps speed=${progress.speed}x`;
 });
-function updateProgressBar(percent){
-    const t_pro = ((completedVideos / input_videos.length) * 100) + (percent / input_videos.length)
-    current_progress.value = percent;
-    current_progress.nextSibling.textContent = ` ${completedVideos + 1} of ${input_videos.length} : ${Math.floor(percent)}%`
+function updateProgressBar(percent, currentVideo){
+    let ss, to, range = 0;
+    let calPercent = percent;
+    let endTime = convertTimeToSeconds(document.querySelector(`[title="${currentVideo}"]`).parentNode.children[5].textContent);
+    if(document.querySelector('#ss').value) ss = convertTimeToSeconds(document.querySelector('#ss').value);
+    if(document.querySelector('#to').value) to = convertTimeToSeconds(document.querySelector('#to').value);
+
+    if(to - ss !== 0 && percent !== 100) calPercent = percent / ((to - ss) / endTime);
+    else calPercent = percent;
+
+    current_progress.value = calPercent;
+    current_progress.nextSibling.textContent = ` ${completedVideos + 1} of ${input_videos.length} : ${Math.floor(calPercent)}%`
+
+    let t_pro = ((completedVideos / input_videos.length) * 100) + (calPercent / input_videos.length);
     total_progress.value = t_pro;
     total_progress.nextSibling.textContent = ` total : ${Math.floor(t_pro)}%`
 }
@@ -391,12 +446,15 @@ function toggleInterface(){
         options.forEach(option => {option.disabled = true;});
         btns.forEach(button => {button.disabled = true});
     } else {
-        options.forEach(option => {option.disabled = false;});
+        options.forEach(option => {
+            if(document.querySelector('#presets').value !== 'custom' && !option.classList.contains('essential')) return;
+            option.disabled = false;
+        });
         btns.forEach(button => {button.disabled = false});
     }
 }
 
-// 인코딩을 시작합니다.
+// 인코딩을 수행합니다..
 async function encodeVideos(videos, options){
     current_progress.value = 0;
     total_progress.value = 0;
@@ -406,7 +464,7 @@ async function encodeVideos(videos, options){
     for(const video of videos) {
         const encodingOptions = {
             inputFile : video.filePath,
-            inputOptions : options.inputOptions,
+            presets : options.presets,
             outputOptions : options.outputOptions,
         };
         if(options.hasOwnProperty('outputPath')) encodingOptions['outputPath'] = options.outputPath;
@@ -419,10 +477,22 @@ async function encodeVideos(videos, options){
             alert('The process has stopped');
             break;
         }
-        updateProgressBar(100);
+        updateProgressBar(100, video.getFileNameWithoutExtension());
         completedVideos++;
     }
     isEncoding = false;
     toggleInterface();
     alert('encoding complete!');
 }
+
+// 앱이 완전히 로드되면 프리셋 리스트를 불러옵니다.
+window.onload = function(){ window.electron.send('get_presets_list');}
+window.electron.on('presets_list', (list) => {
+    const presetsList = document.querySelector('#presets');
+    list.forEach(preset => {
+        const loadedPreset = document.createElement('option');
+        loadedPreset.value = preset;
+        loadedPreset.textContent = preset;
+        presetsList.append(loadedPreset);
+    });
+});

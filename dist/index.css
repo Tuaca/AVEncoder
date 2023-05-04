@@ -28,6 +28,7 @@ input[type='checkbox']{
 input[type='checkbox']:checked:after{
     content:"\2713";
 }
+input:disabled, select:disabled{background-color:#242424; color:#666;}
 ::-webkit-slider-thumb{-webkit-appearance: none; appearance: none;}
 select{
     color: #bbb;
@@ -216,7 +217,6 @@ hr{margin: 0 0 5px; width:200px; border-top:1px solid #181818; border-bottom: 1p
 .encoding_item input[type="range"] {height: 6px; padding:0;}
 .encoding_item input[type="range"]::-webkit-slider-thumb {width:5px; height:15px; border-radius: 3px; background-color:#999;}
 #output_btn {width:18px; height: 18px; background-color: #666; border-radius: 20px; box-sizing: border-box;}
-input[name="bitrate"]:disabled{background-color:#242424; color:#666;}
 .dropdown{
     display: flex;
     flex-direction: column;
@@ -235,6 +235,23 @@ input[name="bitrate"]:disabled{background-color:#242424; color:#666;}
     align-items: center;
 }
 #format optgroup {display:none;}
+#export_preset{
+    width: 140px;
+    height: 30px;
+    font-family: inherit;
+    color:inherit;
+    background-color: #242424;
+    border: 1px solid #323232;
+    border-right-color: #181818;
+    border-bottom-color: #181818;
+    border-radius: 15px;
+    margin-top:10px;
+}
+#export_preset:active{
+    border: 1px solid #181818;
+    border-right-color: #323232;
+    border-bottom-color: #323232;
+}
 
 /*진행상황 영역*/
 #encoder .grid-item:nth-child(4){
