@@ -5,3 +5,6 @@ dist/AVEncoder Setup 1.0.0.exe.blockmap
 dist/builder-debug.yml
 dist/builder-effective-config.yaml
 dist/latest.yml
+out/
+forge.config.js
+.idea/

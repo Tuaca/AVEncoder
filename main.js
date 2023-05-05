@@ -2,6 +2,9 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('ffmpeg-static');
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 async function createWindow() {
     console.log('Creating main windows...');
@@ -25,19 +28,13 @@ async function createWindow() {
 }
 
 app.whenReady().then(() => {
+    createWindow();
 
     const appDataPath = getAppDataPath();
     const presetsFolderPath = path.join(appDataPath, 'presets');
-    const ffmpeg = require('fluent-ffmpeg');
-    const ffmpegPath = require('ffmpeg-static');
-
-    ffmpeg.setFfmpegPath(ffmpegPath);
-
     // Create the directory if it doesn't exist
     if (!fs.existsSync(appDataPath)) {fs.mkdirSync(appDataPath, { recursive: true });}
     if (!fs.existsSync(presetsFolderPath)) {fs.mkdirSync(presetsFolderPath, { recursive: true });}
-
-    createWindow();
 
     ipcMain.on('get_presets_list', (event) => {
         event.sender.send('presets_list', getPresetsList(presetsFolderPath));
@@ -55,7 +52,6 @@ app.whenReady().then(() => {
     ipcMain.handle('dialog',(event,method,params) => {
         return dialog[method](params);
     });
-
 
     ipcMain.handle('execute-ffmpeg', async (event, args) => {
         let proc; // ffmpeg process
